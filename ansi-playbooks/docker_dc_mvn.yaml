@@ -1,121 +1,39 @@
 ---
-- name: Install Docker, Docker Compose, and Maven
-  hosts: vm01-main  # Running on Ansible controller
-  become: yes  # Ensure tasks run with sudo
-  remote_user: username1  # Specify the remote user (change as necessary)
- 
+- name: Install Docker on CentOS
+  hosts: vm01-main
+  become: true
   tasks:
-    - name: Install required dependencies (Debian-based)
-      package:
+    - name: Add Docker repository
+      command: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+ 
+    - name: Install Docker packages
+      dnf:
         name:
-          - apt-transport-https
-          - ca-certificates
-          - curl
-          - gnupg
-          - lsb-release
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
         state: present
-      when: ansible_os_family == "Debian"  # For Debian-based distros like Ubuntu
  
-    - name: Install required dependencies (RHEL/CentOS/Fedora)
-      package:
-        name:
-          - yum-utils
-          - device-mapper-persistent-data
-          - lvm2
-        state: present
-      when: ansible_os_family == "RedHat"  # For RHEL/CentOS/Fedora
- 
-    # Docker Installation for Debian-based systems (Ubuntu, Debian)
-    - name: Add Docker repository (Debian-based)
-      get_url:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        dest: /etc/apt/trusted.gpg.d/docker.asc
-      when: ansible_os_family == "Debian"
- 
-    - name: Add Docker repository (RHEL/CentOS)
-      command: >
-        yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-      when: ansible_os_family == "RedHat"
- 
-    - name: Install Docker (Debian-based)
-      apt:
-        name: docker-ce
-        state: present
-        update_cache: yes
-      when: ansible_os_family == "Debian"
- 
-    - name: Install Docker (RHEL/CentOS)
-      yum:
-        name: docker-ce
-        state: present
-      when: ansible_os_family == "RedHat"
- 
-    - name: Start and enable Docker service
+    - name: Start Docker service
       systemd:
         name: docker
         state: started
-        enabled: yes
  
-    - name: Add user to docker group (optional, if you want to avoid using `sudo` for docker commands)
-      user:
-        name: "username1"  # Use the `ansible_user` variable
-        groups: docker      # Specify the groups parameter
-        append: yes
+    - name: Enable Docker service
+      systemd:
+        name: docker
+        enabled: true
  
-    # Docker Compose Installation
-    - name: Get system's OS and Architecture for Docker Compose URL
-      shell: |
-        echo "$(uname -s)-$(uname -m)"
-      register: system_info
+    - name: Check Docker service status
+      command: systemctl status docker
+      register: docker_status
+      ignore_errors: yes
  
-    - name: Install Docker Compose (latest version)
-      get_url:
-        url: "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-{{ system_info.stdout }}"
-        dest: /usr/local/bin/docker-compose
-        mode: 'u+x'
-      register: docker_compose_install
- 
-    - name: Check if Docker Compose is installed
-      stat:
-        path: /usr/local/bin/docker-compose
-      register: docker_compose_stat
- 
-    - name: Fail if Docker Compose was not installed
-      fail:
-        msg: "Docker Compose installation failed!"
-      when: docker_compose_stat.stat.exists == false
- 
-    - name: Verify Docker installation
-      command: docker --version
- 
-    - name: Verify Docker Compose installation
-      command: /usr/local/bin/docker-compose --version  # Ensure the correct path is used
-      register: docker_compose_version
-      failed_when: docker_compose_version.rc != 0
- 
-    - name: Display Docker Compose version
+    - name: Print Docker service status
       debug:
-        msg: "Docker Compose version: {{ docker_compose_version.stdout }}"
-
-    # Maven Installation for Debian-based systems (Ubuntu, Debian)
-    - name: Install Maven (Debian-based)
-      apt:
+        var: docker_status.stdout_lines
+    - name: Install Maven
+      dnf:
         name: maven
         state: present
-      when: ansible_os_family == "Debian"
- 
-    # Maven Installation for RHEL/CentOS
-    - name: Install Maven (RHEL/CentOS)
-      yum:
-        name: maven
-        state: present
-      when: ansible_os_family == "RedHat"
- 
-    - name: Verify Maven installation
-      command: mvn -v
-      register: maven_version
-      failed_when: maven_version.rc != 0
- 
-    - name: Display Maven version
-      debug:
-        msg: "Maven version: {{ maven_version.stdout }}"
