@@ -1,0 +1,27 @@
+---
+- name: Install Maven on Servers and Clients
+  hosts: all
+  become: yes  # Use 'become' to run commands with sudo
+  tasks:
+    - name: Update the package index
+      dnf:
+        name: '*'
+        state: latest
+ 
+    - name: Install Maven
+      dnf:
+        name: maven
+        state: present
+ 
+    - name: Verify Maven installation
+      command: mvn -version
+      register: maven_version
+ 
+    - name: Fail if Maven installation failed
+      fail:
+        msg: "Maven installation failed!"
+      when: maven_version.rc != 0
+ 
+    - name: Display Maven version
+      debug:
+        msg: "Maven version: {{ maven_version.stdout }}"

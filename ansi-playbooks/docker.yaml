@@ -1,0 +1,96 @@
+---
+- name: Install Docker and Docker Compose
+  hosts: vm01-MT  # Running on Ansible controller
+  become: yes  # Ensure tasks run with sudo
+  remote_user: azureuser  # Specify the remote user (change as necessary)
+ 
+  tasks:
+    - name: Install required dependencies (Debian-based)
+      package:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+      when: ansible_os_family == "Debian"  # For Debian-based distros like Ubuntu
+ 
+    - name: Install Docker dependencies (RHEL/CentOS/Fedora)
+      package:
+        name:
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+        state: present
+      when: ansible_os_family == "RedHat"  # For RHEL/CentOS/Fedora
+ 
+    - name: Add Docker repository (Debian-based)
+      get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/trusted.gpg.d/docker.asc
+      when: ansible_os_family == "Debian"
+ 
+    - name: Add Docker repository (RHEL/CentOS)
+      command: >
+        yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+      when: ansible_os_family == "RedHat"
+ 
+    - name: Install Docker (Debian-based)
+      apt:
+        name: docker-ce
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+ 
+    - name: Install Docker (RHEL/CentOS)
+      yum:
+        name: docker-ce
+        state: present
+      when: ansible_os_family == "RedHat"
+ 
+    - name: Start and enable Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+ 
+    - name: Add user to docker group (optional, if you want to avoid using `sudo` for docker commands)
+      user:
+        name: "azureuser"  # Use the `ansible_user` variable
+        groups: docker      # Specify the groups parameter
+        append: yes
+ 
+    - name: Get system's OS and Architecture for Docker Compose URL
+      shell: |
+        echo "$(uname -s)-$(uname -m)"
+      register: system_info
+ 
+    - name: Install Docker Compose (latest version)
+      get_url:
+        url: "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-{{ system_info.stdout }}"
+        dest: /usr/local/bin/docker-compose
+        mode: 'u+x'
+      register: docker_compose_install
+ 
+    - name: Check if Docker Compose is installed
+      stat:
+        path: /usr/local/bin/docker-compose
+      register: docker_compose_stat
+ 
+    - name: Fail if Docker Compose was not installed
+      fail:
+        msg: "Docker Compose installation failed!"
+      when: docker_compose_stat.stat.exists == false
+ 
+    - name: Verify Docker installation
+      command: docker --version
+ 
+    - name: Verify Docker Compose installation
+      command: /usr/local/bin/docker-compose --version  # Ensure the correct path is used
+      register: docker_compose_version
+      failed_when: docker_compose_version.rc != 0
+ 
+    - name: Display Docker Compose version
+      debug:
+        msg: "Docker Compose version: {{ docker_compose_version.stdout }}"

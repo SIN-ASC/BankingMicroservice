@@ -1,0 +1,22 @@
+---
+- name: Install and configure Apache HTTP Server
+  hosts: vm02-MT  # Replace with your target host or group
+  become: yes  # To execute commands as root
+ 
+  tasks:
+    - name: Ensure Apache is installed
+      package:
+        name: httpd
+        state: present  # Ensures that the package is installed
+ 
+    - name: Start Apache service
+      systemd:
+        name: httpd
+        state: started  # Start the service
+        enabled: yes   # Enable it to start at boot
+ 
+    - name: Ensure Apache is running
+      systemd:
+        name: httpd
+        state: started  # Ensure the service is running
+        enabled: yes   # Ensure it starts on boot
