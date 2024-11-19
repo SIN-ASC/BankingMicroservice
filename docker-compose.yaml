@@ -4,7 +4,7 @@ services:
     build:
       context: .  # Build from the current directory
     ports:
-      - "8080:8080"  # Map port 8080 of the container to port 8080 on the host
+      - "8000:8080"  # Map port 8080 of the container to port 8080 on the host
     networks:
       - banking-network
     volumes:
