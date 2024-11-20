@@ -6,7 +6,7 @@ provider "azurerm" {
 # Resource Group
 resource "azurerm_resource_group" "rg_new" {
   name     = "RG-SC3"        # Updated resource group name
-  location = "Central Canada"
+  location = "Canada Central"
 }
 
 # Virtual Network
