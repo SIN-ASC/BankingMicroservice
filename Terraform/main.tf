@@ -1,36 +1,36 @@
 provider "azurerm" {
   features {}
-  subscription_id = "0f519cc7-9081-446a-9220-3cbc54c8d404"
-  tenant_id       = "4657bbb2-e4ed-4c25-ae0c-524e6d0d8061"
+  subscription_id = var.subscription_id 
+  tenant_id       = var.tenant_id 
 }
  
 # Resource Group
 resource "azurerm_resource_group" "rg2" {
-  name     = "rg2-S3"
-  location = "Canada Central"
+  name     = var.resource_group_name
+  location = var.resource_group_location
 }
  
 # Virtual Network
 resource "azurerm_virtual_network" "vnet" {
-  name                = "vnet-S3"
-  address_space       = ["10.0.0.0/19"]
+  name                = var.vnet_name
+  address_space       = var.address_space
   location            = azurerm_resource_group.rg2.location
   resource_group_name = azurerm_resource_group.rg2.name
 }
  
 # Subnet
 resource "azurerm_subnet" "subnet" {
-  name                 = "subnet-S3"
-  resource_group_name  = azurerm_resource_group.rg2.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.0.0.0/24"]
+  name                 = var.subnet_name
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = var.vnet_name
+  address_prefixes     = var.subnet_address_prefix
 }
  
 # Network Security Group
 resource "azurerm_network_security_group" "nsg" {
-  name                = "nsg-S3"
-  location            = azurerm_resource_group.rg2.location
-  resource_group_name = azurerm_resource_group.rg2.name
+  name                = var.nsg_name
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
  
   security_rule {
     name                       = "AllowSSH"
@@ -76,13 +76,13 @@ resource "azurerm_network_interface_security_group_association" "nic_nsg" {
  
 # Linux Virtual Machine
 resource "azurerm_linux_virtual_machine" "linux_vm" {
-  name                            = "linux-vm-S3"
+  name                            = var.vm_name
   resource_group_name             = azurerm_resource_group.rg2.name
   location                        = azurerm_resource_group.rg2.location
-  size                            = "Standard_DS1_v2"
-  admin_username                  = "adminuser"
-  admin_password                  = "Password@123" # Replace with secure credentials
-  disable_password_authentication = false
+  size                            = var.vm_size
+  admin_username                  = var.vm_admin_username
+  admin_password                  = var.vm_admin_password # Replace with secure credentials
+  disable_password_authentication = var.disable_pswd_auth
  
   network_interface_ids = [azurerm_network_interface.nic_linux.id]
  
@@ -92,16 +92,16 @@ resource "azurerm_linux_virtual_machine" "linux_vm" {
   }
  
   source_image_reference {
-    publisher = "solvedevops1643693563360"
-    offer     = "rocky-linux-9"
-    sku       = "plan001"
-    version   = "latest"
+    publisher = var.vm_image_publisher
+    offer     = var.vm_image_offer
+    sku       = var.vm_image_sku
+    version   = var.vm_image_version
   }
- 
+
   plan {
-    name      = "plan001"
-    publisher = "solvedevops1643693563360"
-    product   = "rocky-linux-9"
+    name      = var.vm_image_sku
+    publisher = var.vm_image_publisher
+    product   = var.vm_image_offer
   }
  
   custom_data = base64encode(<<EOT
