@@ -19,7 +19,7 @@ resource "azurerm_virtual_network" "vnet_new" {
 
 # Subnet
 resource "azurerm_subnet" "subnet_new" {
-  name                 = "subnet-S3"    # Updated subnet name
+  name                 = "subnet-SC3"    # Updated subnet name
   resource_group_name  = azurerm_resource_group.rg_new.name
   virtual_network_name = azurerm_virtual_network.vnet_new.name
   address_prefixes     = ["10.1.0.0/24"]     # Updated subnet address prefix
@@ -27,14 +27,14 @@ resource "azurerm_subnet" "subnet_new" {
 
 # Network Security Group
 resource "azurerm_network_security_group" "nsg_new" {
-  name                = "nsg-S3"      # Updated NSG name
+  name                = "nsg-SC3"      # Updated NSG name
   location            = azurerm_resource_group.rg_new.location
   resource_group_name = azurerm_resource_group.rg_new.name
 }
 
 # Public IP Address
 resource "azurerm_public_ip" "vm_public_ip_new" {
-  name                = "vm-public-ip-S3"  # Updated Public IP name
+  name                = "vm-public-ip-SC3"  # Updated Public IP name
   location            = azurerm_resource_group.rg_new.location
   resource_group_name = azurerm_resource_group.rg_new.name
   allocation_method   = "Static"
@@ -58,7 +58,7 @@ resource "azurerm_network_interface" "nic_linux_new" {
 
 # Linux Virtual Machine
 resource "azurerm_linux_virtual_machine" "linux_vm_new" {
-  name                            = "linux-vm-new-xyz"      # Updated VM name
+  name                            = "linux-vm-SC3"      # Updated VM name
   resource_group_name             = azurerm_resource_group.rg_new.name
   location                        = azurerm_resource_group.rg_new.location
   size                            = "Standard_DS2_v2"       # Updated VM size
