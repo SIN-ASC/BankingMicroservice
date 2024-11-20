@@ -5,13 +5,13 @@ provider "azurerm" {
 
 # Resource Group
 resource "azurerm_resource_group" "rg_new" {
-  name     = "rg-New-XYZ"        # Updated resource group name
-  location = "West US"           # Updated location to West US
+  name     = "RG-SC3"        # Updated resource group name
+  location = "Central India"
 }
 
 # Virtual Network
 resource "azurerm_virtual_network" "vnet_new" {
-  name                = "vnet-New-XYZ"  # Updated virtual network name
+  name                = "vnet-SC3"  # Updated virtual network name
   address_space       = ["10.1.0.0/16"] # Updated address space
   location            = azurerm_resource_group.rg_new.location
   resource_group_name = azurerm_resource_group.rg_new.name
@@ -19,7 +19,7 @@ resource "azurerm_virtual_network" "vnet_new" {
 
 # Subnet
 resource "azurerm_subnet" "subnet_new" {
-  name                 = "subnet-New-XYZ"    # Updated subnet name
+  name                 = "subnet-S3"    # Updated subnet name
   resource_group_name  = azurerm_resource_group.rg_new.name
   virtual_network_name = azurerm_virtual_network.vnet_new.name
   address_prefixes     = ["10.1.0.0/24"]     # Updated subnet address prefix
@@ -27,14 +27,14 @@ resource "azurerm_subnet" "subnet_new" {
 
 # Network Security Group
 resource "azurerm_network_security_group" "nsg_new" {
-  name                = "nsg-New-XYZ"      # Updated NSG name
+  name                = "nsg-S3"      # Updated NSG name
   location            = azurerm_resource_group.rg_new.location
   resource_group_name = azurerm_resource_group.rg_new.name
 }
 
 # Public IP Address
 resource "azurerm_public_ip" "vm_public_ip_new" {
-  name                = "vm-public-ip-new-xyz"  # Updated Public IP name
+  name                = "vm-public-ip-S3"  # Updated Public IP name
   location            = azurerm_resource_group.rg_new.location
   resource_group_name = azurerm_resource_group.rg_new.name
   allocation_method   = "Static"
