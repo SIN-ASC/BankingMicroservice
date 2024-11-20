@@ -151,6 +151,7 @@ output "vm_public_ip" {
 }
 
 
-# If you haven't accepted the legal terms on this subscription and getting error. Run the below commands:
+# If you haven't accepted the legal terms on this subscription and getting error while terraform apply. 
+# Run the below commands:
 # az vm image accept-terms --offer rocky-linux-9 --publisher solvedevops1643693563360 --sku plan001
 # az vm image accept-terms --urn solvedevops1643693563360:rocky-linux-9:plan001:latest 
