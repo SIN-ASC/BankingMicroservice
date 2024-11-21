@@ -3,11 +3,6 @@ provider "azurerm" {
   subscription_id = var.subscription_id 
   tenant_id       = "4657bbb2-e4ed-4c25-ae0c-524e6d0d8061" 
 }
- 
-provider "azurerm" {
-  features {}
-  subscription_id = var.subscription_id
-}
 
 # Resource Group
 resource "azurerm_resource_group" "rg2" {
@@ -154,12 +149,6 @@ EOT
 output "vm_public_ip" {
   value = azurerm_public_ip.vm_public_ip.ip_address
 }
- 
-# Output Public IP Address
-output "vm_public_ip" {
-  value = azurerm_public_ip.vm_public_ip.ip_address
-}
-
 
 # If you haven't accepted the legal terms on this subscription and getting error while terraform apply. 
 # Run the below commands:
