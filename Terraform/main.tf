@@ -21,7 +21,7 @@ resource "azurerm_virtual_network" "vnet" {
 # Subnet
 resource "azurerm_subnet" "subnet" {
   name                 = var.subnet_name
-  resource_group_name  = var.resource_group_name
+  resource_group_name  = azurerm_resource_group.rg2.name
   virtual_network_name = var.vnet_name
   address_prefixes     = var.subnet_address_prefix
 }
@@ -29,8 +29,8 @@ resource "azurerm_subnet" "subnet" {
 # Network Security Group
 resource "azurerm_network_security_group" "nsg" {
   name                = var.nsg_name
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
+  location            = azurerm_resource_group.rg2.location
+  resource_group_name = azurerm_resource_group.rg2.name
  
   security_rule {
     name                       = "AllowSSH"
@@ -48,8 +48,8 @@ resource "azurerm_network_security_group" "nsg" {
 # Public IP Address
 resource "azurerm_public_ip" "vm_public_ip" {
   name                = "vm-public-ip-S3"
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
+  location            = azurerm_resource_group.rg2.location
+  resource_group_name = azurerm_resource_group.rg2.name
   allocation_method   = "Static"  # Static allocation
   sku                 = "Standard"  # Standard SKU for public IP
 }
@@ -57,8 +57,8 @@ resource "azurerm_public_ip" "vm_public_ip" {
 # Network Interface for Linux VM
 resource "azurerm_network_interface" "nic_linux" {
   name                = "nic-linux-vm-S3"
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
+  location            = azurerm_resource_group.rg2.location
+  resource_group_name = azurerm_resource_group.rg2.name
  
   ip_configuration {
     name                          = "ipconfig-linux-S3"
@@ -77,8 +77,8 @@ resource "azurerm_network_interface_security_group_association" "nic_nsg" {
 # Linux Virtual Machine
 resource "azurerm_linux_virtual_machine" "linux_vm" {
   name                            = var.vm_name
-  resource_group_name             = var.resource_group_name
-  location                        = var.resource_group_location
+  resource_group_name             = azurerm_resource_group.rg2.name
+  location                        = azurerm_resource_group.rg2.location
   size                            = var.vm_size
   admin_username                  = var.vm_admin_username
   admin_password                  = var.vm_admin_password # Replace with secure credentials
