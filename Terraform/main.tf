@@ -30,7 +30,7 @@ resource "azurerm_subnet" "subnet" {
 resource "azurerm_network_security_group" "nsg" {
   name                = var.nsg_name
   location            = var.resource_group_location
-  resource_group_name = azurerm_resource_group.rg2
+  resource_group_name = var.resource_group_name
  
   security_rule {
     name                       = "AllowSSH"
@@ -49,7 +49,7 @@ resource "azurerm_network_security_group" "nsg" {
 resource "azurerm_public_ip" "vm_public_ip" {
   name                = "vm-public-ip-S3"
   location            = var.resource_group_location
-  resource_group_name = azurerm_resource_group.rg2
+  resource_group_name = var.resource_group_name
   allocation_method   = "Static"  # Static allocation
   sku                 = "Standard"  # Standard SKU for public IP
 }
@@ -58,7 +58,7 @@ resource "azurerm_public_ip" "vm_public_ip" {
 resource "azurerm_network_interface" "nic_linux" {
   name                = "nic-linux-vm-S3"
   location            = var.resource_group_location
-  resource_group_name = azurerm_resource_group.rg2
+  resource_group_name = var.resource_group_name
  
   ip_configuration {
     name                          = "ipconfig-linux-S3"
@@ -77,7 +77,7 @@ resource "azurerm_network_interface_security_group_association" "nic_nsg" {
 # Linux Virtual Machine
 resource "azurerm_linux_virtual_machine" "linux_vm" {
   name                            = var.vm_name
-  resource_group_name             = azurerm_resource_group.rg2
+  resource_group_name             = var.resource_group_name
   location                        = var.resource_group_location
   size                            = var.vm_size
   admin_username                  = var.vm_admin_username
