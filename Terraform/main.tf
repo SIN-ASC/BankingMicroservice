@@ -12,7 +12,7 @@ resource "azurerm_resource_group" "rg2" {
  
 # Virtual Network
 resource "azurerm_virtual_network" "vnet" {
-  name                = var.vnet_name
+  name                = "vnet-S3"
   address_space       = var.address_space
   location            = azurerm_resource_group.rg2.location
   resource_group_name = azurerm_resource_group.rg2.name
@@ -22,7 +22,7 @@ resource "azurerm_virtual_network" "vnet" {
 resource "azurerm_subnet" "subnet" {
   name                 = var.subnet_name
   resource_group_name  = azurerm_resource_group.rg2.name
-  virtual_network_name = azurerm_virtual_network.vnet
+  virtual_network_name = "vnet-S3"
   address_prefixes     = var.subnet_address_prefix
 }
  

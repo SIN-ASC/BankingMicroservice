@@ -2,7 +2,6 @@ subscription_id          = "0f519cc7-9081-446a-9220-3cbc54c8d404"
 tenant_id                = "4657bbb2-e4ed-4c25-ae0c-524e6d0d8061"
 resource_group_location  = "Canada Central"
 resource_group_name      = "rg2-S3"
-vnet_name                = "vnet-S3"
 address_space            = ["10.0.0.0/19"]
 subnet_name              = "subnet-S3"
 subnet_address_prefix    = ["10.0.0.0/24"]
