@@ -4,6 +4,16 @@ provider "azurerm" {
   tenant_id       = "4657bbb2-e4ed-4c25-ae0c-524e6d0d8061" 
 }
 
+terraform {
+
+  backend "azurerm" {
+    resource_group_name   = "RG-Backup-TF"
+    storage_account_name  = "tfbackupsa"
+    container_name        = "tfbackupcontainer"
+    key                   = "terraform.tfstate"  # You can customize the state file name
+  }
+}
+
 # Resource Group
 resource "azurerm_resource_group" "rg2" {
   name     = "rg2-S3"
