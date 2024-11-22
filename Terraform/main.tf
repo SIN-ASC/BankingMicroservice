@@ -162,6 +162,22 @@ sudo dnf install -y maven
 # Verify Maven installation
 echo "Verifying Maven installation..."
 sudo mvn --version && echo "Maven successfully installed." || echo "Maven installation failed."
+
+# Install epel-release (to enable additional repositories for packages like Ansible)
+echo "Installing epel-release..."
+sudo dnf -y install epel-release
+ 
+# Install Ansible
+echo "Installing Ansible..."
+sudo dnf -y install ansible
+ 
+# Install Git
+echo "Installing Git..."
+sudo dnf -y install git
+ 
+# Install JDK 17
+echo "Installing OpenJDK 17..."
+sudo dnf -y install java-17-openjdk-devel
  
 # Script completion message
 echo "Custom data script execution completed."
